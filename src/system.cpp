@@ -34,3 +34,14 @@ int System::RunningProcesses() { return 0; }
 int System::TotalProcesses() { return 0; }
 
 long int System::UpTime() { return LinuxParser::UpTime(); }
+
+std::vector<Process> System::getProcesses() {
+  std::vector<int> pids = LinuxParser::Pids();
+  std::vector<Process> ps;
+  for (int pid : pids) {
+    Process p(pid);
+    ps.push_back(p);
+  }
+  return ps;
+  
+}
