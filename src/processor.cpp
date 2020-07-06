@@ -9,10 +9,10 @@ float Processor::Utilization() {
   sleep(1);
   std::vector<long> stat = Processor::GetStats();
   long nonIdle = Processor::GetNonIdle(stat);
-  long idel = Processor::GetIdle(stat);
+  long idle = Processor::GetIdle(stat);
   
-  double totalD = nonIdle + idel - prevNonIdle - prevIdle;
-  double idleD = idel - prevIdle;
+  double totalD = nonIdle + idle - prevNonIdle - prevIdle;
+  double idleD = idle - prevIdle;
   return (totalD - idleD) / totalD;
 }
 
