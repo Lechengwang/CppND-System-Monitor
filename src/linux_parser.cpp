@@ -95,18 +95,75 @@ long LinuxParser::UpTime() {
   return (long) uptime;
 }
 
-// TODO: Read and return the number of jiffies for the system
-long LinuxParser::Jiffies() { return 0; }
+long LinuxParser::Jiffies() { 
+  // jiffies = uptime * freq
+  long uptime = LinuxParser::UpTime();
+  long freq = sysconf(_SC_CLK_TCK);
+ return uptime * freq; 
+}
 
-// TODO: Read and return the number of active jiffies for a PID
-// REMOVE: [[maybe_unused]] once you define the function
-long LinuxParser::ActiveJiffies(int pid[[maybe_unused]]) { return 0; }
+long LinuxParser::ActiveJiffies(int pid) {
+  // per pid jiffie is token 13-16 (starting from 0) of prod/pid/stat file
+  int stat_token = 17;
+  long result = 0;
+  string token[stat_token];
+  string line;
+  std::ifstream stream(kProcDirectory + "/" + std::to_string(pid) + "/" + kStatFilename);
+  if (stream.is_open()) {
+    std::getline(stream, line);
+    std::istringstream linestream(line);
+    for (int i = 0; i < stat_token; i ++) {
+      linestream >> token[i];
+      if (i >= 13 && i <= 16) {
+        result += std::stoi(token[i]);
+      }
+    }
+  }
+  return result;
+}
 
-// TODO: Read and return the number of active jiffies for the system
-long LinuxParser::ActiveJiffies() { return 0; }
+long LinuxParser::ActiveJiffies() {
+  int stat_token = 10;
+  long result = 0;
+  long token[stat_token];
+  string cpu;
+  string line;
+  std::ifstream stream(kProcDirectory + kStatFilename);
+  if (stream.is_open()) {
+    // We only care about the 1st line of the stat file for jiffies
+    std::getline(stream, line);
+    std::istringstream linestream(line);
+    linestream >> cpu;
+    for (int i = 0; i < stat_token; i ++) {
+      linestream >> token[i];
+        result += token[i];
+    }
+  }
+  return result;
+}
 
-// TODO: Read and return the number of idle jiffies for the system
-long LinuxParser::IdleJiffies() { return 0; }
+long LinuxParser::IdleJiffies() {
+  int stat_token = 10;
+  long result = 0;
+  long token[stat_token];
+  string cpu;
+  string line;
+  std::ifstream stream(kProcDirectory + kStatFilename);
+  if (stream.is_open()) {
+    // We only care about the 1st line of the stat file for jiffies
+    std::getline(stream, line);
+    std::istringstream linestream(line);
+    linestream >> cpu;
+    for (int i = 0; i < stat_token; i ++) {
+      linestream >> token[i];
+      // idel jiffies are idle+iowait
+      if (i == 3 || i == 4) {
+        result += token[i];
+      }
+    }
+  }
+  return result;
+}
 
 // TODO: Read and return CPU utilization
 vector<string> LinuxParser::CpuUtilization() { return {}; }
