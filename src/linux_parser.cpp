@@ -179,8 +179,11 @@ float LinuxParser::CpuUtilization(int pid) {
     }
   }
   long freq = sysconf(_SC_CLK_TCK);
-  long total_time = std::stol(token[13]) + std::stol(token[14]) + std::stol(token[15]) + std::stol(token[16]);
-  double seconds = uptime - stol(token[21]) / freq;
+  long total_time = (token[13] == "" ? 0: std::stol(token[13])) + 
+    (token[14] == "" ? 0: std::stol(token[14])) + 
+    (token[15] == "" ? 0: std::stol(token[15])) + 
+    (token[16] == "" ? 0: std::stol(token[16]));
+  double seconds = uptime - (token[21] == "" ? 0: stol(token[21])) / freq;
   double result = (double)total_time / freq / seconds;
   return (float)result;
 }
@@ -219,7 +222,7 @@ string LinuxParser::Command(int pid) {
   std::ifstream stream(kProcDirectory + "/" + std::to_string(pid) + "/" + kCmdlineFilename);
   string line;
   if(stream.is_open()) {
-    std::getline(stream, line, '\r');
+    std::getline(stream, line);
     return line;
   }
 }
