@@ -199,8 +199,6 @@ string LinuxParser::Uid(int pid[[maybe_unused]]) {
   }
 }
 
-// TODO: Read and return the user associated with a process
-// REMOVE: [[maybe_unused]] once you define the function
 string LinuxParser::User(int pid) {
   string uid = LinuxParser::Uid(pid);
   string user, x, id;
@@ -219,4 +217,18 @@ string LinuxParser::User(int pid) {
 }
 // TODO: Read and return the uptime of a process
 // REMOVE: [[maybe_unused]] once you define the function
-long LinuxParser::UpTime(int pid[[maybe_unused]]) { return 0; }
+long LinuxParser::UpTime(int pid) { 
+  string token[22];
+  string line;
+  std::ifstream stream(kProcDirectory + "/" + std::to_string(pid) + "/" + kStatFilename); 
+  if (stream.is_open()) {
+    // We only care about the 1st line of the stat file for jiffies
+    std::getline(stream, line);
+    std::istringstream linestream(line);
+    for (int i = 0; i < 22; i ++) {
+      linestream >> token[i];
+    }
+  }
+  long freq = sysconf(_SC_CLK_TCK);
+  return stol(token[21]) / freq;
+}
