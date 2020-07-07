@@ -201,6 +201,8 @@ int LinuxParser::TotalProcesses() {
       }
     }
   }
+  // Exception case: returning 0
+  return 0;
 }
 
 int LinuxParser::RunningProcesses() { 
@@ -216,6 +218,8 @@ int LinuxParser::RunningProcesses() {
       }
     }
   }
+  // Exception case: returning 0
+  return 0;
 }
 
 string LinuxParser::Command(int pid) {
@@ -225,6 +229,8 @@ string LinuxParser::Command(int pid) {
     std::getline(stream, line);
     return line;
   }
+  // Exception case: returning empty string
+  return string();
 }
 
 string LinuxParser::Ram(int pid) {
@@ -239,9 +245,12 @@ string LinuxParser::Ram(int pid) {
        return std::to_string(stoi(value) / 1024) + "MB";
      }
     }
-  }}
+  }
+  // Exception case: returning empty string
+  return string();
+}
 
-string LinuxParser::Uid(int pid[[maybe_unused]]) { 
+string LinuxParser::Uid(int pid) { 
   string key, value;
   string line;
   std::ifstream stream(kProcDirectory + "/" + std::to_string(pid) + "/" + kStatusFilename);
@@ -254,6 +263,8 @@ string LinuxParser::Uid(int pid[[maybe_unused]]) {
      }
     }
   }
+  // Exception case. Returning empty string
+  return string();
 }
 
 string LinuxParser::User(int pid) {
@@ -271,6 +282,8 @@ string LinuxParser::User(int pid) {
      }
     }
   }
+  // Exception case. Return empty string
+  return string();
 }
 
 long LinuxParser::UpTime(int pid) { 
