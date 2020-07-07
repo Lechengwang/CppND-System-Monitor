@@ -20,8 +20,7 @@ string Process::Command() {
   return LinuxParser::Command(pid_);
 }
 
-// TODO: Return this process's memory utilization
-string Process::Ram() { return string(); }
+string Process::Ram() { return LinuxParser::Ram(pid_); }
 
 string Process::User() {
   return LinuxParser::User(pid_); 
