@@ -299,5 +299,5 @@ long LinuxParser::UpTime(int pid) {
     }
   }
   long freq = sysconf(_SC_CLK_TCK);
-  return std::stol(token[21]) / freq;
+  return LinuxParser::UpTime() - std::stol(token[21]) / freq;
 }
