@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <unistd.h>
 #include <cstddef>
 #include <set>
@@ -15,7 +16,10 @@ using std::vector;
 
 Processor& System::Cpu() { return cpu_; }
 
-vector<Process>& System::Processes() { return processes_; }
+vector<Process>& System::Processes() {
+  std::sort(processes_.begin(), processes_.end()); 
+  return processes_;
+}
 
 std::string System::Kernel() { return LinuxParser::Kernel(); }
 

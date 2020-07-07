@@ -12,14 +12,9 @@ using std::vector;
 
 int Process::Pid() { return pid_; }
 
-float Process::CpuUtilization() {
+float Process::CpuUtilization() const {
   return LinuxParser::CpuUtilization(pid_);
 }
-
-float Process::CpuU() const {
-  return LinuxParser::CpuUtilization(pid_);
-}
-
 
 string Process::Command() {
   return LinuxParser::Command(pid_);
@@ -36,7 +31,5 @@ long int Process::UpTime() {
 }
 
 bool Process::operator<(Process const& a) const {
-  float u1 = LinuxParser::CpuUtilization(pid_);
-  float u2 = a.CpuU();
-  return u1 < u2;
+  return CpuUtilization() > a.CpuUtilization();
 }
