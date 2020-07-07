@@ -185,11 +185,35 @@ float LinuxParser::CpuUtilization(int pid) {
   return (float)result;
 }
 
-// TODO: Read and return the total number of processes
-int LinuxParser::TotalProcesses() { return 0; }
+int LinuxParser::TotalProcesses() {
+  std::ifstream stream(kProcDirectory + kStatFilename);
+  string line;
+  string key, value;
+  if(stream.is_open()) {
+    while(std::getline(stream, line)) {
+      if (line.find("processes") != std::string::npos) {
+        std::istringstream linestream(line);
+        linestream >> key >> value; 
+        return std::stoi(value);
+      }
+    }
+  }
+}
 
-// TODO: Read and return the number of running processes
-int LinuxParser::RunningProcesses() { return 0; }
+int LinuxParser::RunningProcesses() { 
+  std::ifstream stream(kProcDirectory + kStatFilename);
+  string line;
+  string key, value;
+  if(stream.is_open()) {
+    while(std::getline(stream, line)) {
+      if (line.find("procs_running") != std::string::npos) {
+        std::istringstream linestream(line);
+        linestream >> key >> value; 
+        return std::stoi(value);
+      }
+    }
+  }
+}
 
 string LinuxParser::Command(int pid) {
   std::ifstream stream(kProcDirectory + "/" + std::to_string(pid) + "/" + kCmdlineFilename);

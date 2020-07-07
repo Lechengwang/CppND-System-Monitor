@@ -22,6 +22,8 @@ class Process {
   // TODO: Declare any necessary private members
  private:
   int pid_;
+  // A helper method to avoid the 'const' complaint since operator overloading is defined as const.
+  float CpuU() const;
 };
 
 #endif
